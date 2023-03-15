@@ -1,0 +1,10 @@
+---
+###for zabbix agent###
+zbx_ip: 10.88.0.117
+hostName: bceph2-07
+
+###for bond private###
+bondp_ipv4:
+ifnamep1: ens1f0
+ifnamep2: ens1f1
+
