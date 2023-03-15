@@ -1,0 +1,32 @@
+---
+- hosts: all
+  # use --limit to define specific hosts
+  become: yes
+  tasks:
+          - name: copy lpar2rrd agent to remote server
+            copy:
+                  src: /home/ansible/common_config/lpar2rrd-agent-7.50-0.noarch.rpm
+                  dest: /home/ansible/
+                  remote_src: no
+                  owner: root
+                  group: root
+                  state: '0644'
+            become: true
+
+          - name: go to package directory
+            shell:
+                    cmd: cd /home/ansible
+          - name: Local install package
+            shell:
+                    cmd: yum localinstall lpar2rrd-agent-7.50-0.noarch.rpm -y
+          - name: configure package
+            shell: 
+                    cmd: perl /opt/lpar2rrd-agent/lpar2rrd-agent.pl -d 172.20.29.198
+            become: true
+            ignore_errors: true
+            register: command_output
+          - debug:
+                  var: command_output.stdout_lines
+
+
+...

@@ -1,0 +1,45 @@
+---
+- hosts: all
+# use --limit to define specific hosts
+  gather_facts: yes
+  become: yes
+  tasks:
+# run before bootstrap
+          - name: set Timezone Tehran
+            timezone:
+                    name: Asia/Tehran
+          - name: delete chrony old config
+            shell:
+                    cmd: sed -i '/iburst/d' /etc/chrony.conf
+
+          - name: modify chrony file for Babaei Clusters
+            shell:
+                    cmd: sed -i '3 i \server {{ ntp_babaei[0] }} iburst \nserver {{ ntp_babaei[1] }} iburst \n ' /etc/chrony.conf
+            when: ansible_facts['default_ipv4']['gateway'] == "10.19.75.254"
+
+          - name: modify chrony file for Tohid Clusters
+            shell:
+                    cmd: sed -i '3 i \server {{ ntp_babaei[0] }} iburst \nserver {{ ntp_babaei[1] }} iburst \n ' /etc/chrony.conf
+            when: ansible_facts['default_ipv4']['gateway'] == "172.18.27.254"
+
+          - name: modify chrony file for Kazemian Clusters
+            shell:
+                    cmd: sed -i '3 i \server {{ ntp_babaei[0] }} iburst \nserver {{ ntp_babaei[1] }} iburst \n ' /etc/chrony.conf
+            when: ansible_facts['default_ipv4']['gateway'] == "10.156.199.254"
+
+          - name: restart chrony service
+            service:
+                    name: chronyd
+                    state: restarted
+                    enabled: yes
+
+          - name: check chrony
+            shell:
+                    cmd: chronyc sources
+            register: command_output
+          - debug:
+                  var: command_output.stdout_lines
+
+
+...
+

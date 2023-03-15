@@ -1,0 +1,35 @@
+---
+- hosts: all
+  # use --limit to define specific hosts
+  become: yes
+  serial: 1
+  gather_facts: yes
+  tasks:
+# run before bootstrap
+          
+          - name: set Hostname 
+            hostname:
+                    name: "{{ hostName }}"
+            tags: hostname
+
+          - name: ens192 Onboot Yes
+            replace:
+                    path: /etc/sysconfig/network-scripts/ifcfg-ens192     #ifcfg-ens192
+                    regexp: '^ONBOOT=no'
+                    replace: 'ONBOOT=yes'
+
+          - name: Disable IPv6
+            replace:
+                    path: /etc/sysconfig/network-scripts/ifcfg-ens192   #ens192
+                    regexp: '^IPV6.*'
+                    replace: '#'
+                    #sed -i 's/^IPV6.*/ d' /etc/sysconfig/network-scripts/ifcfg-ens192 
+          - name: Restart Network
+            service:
+                  name: NetworkManager
+                  state: started
+                  enabled: yes
+
+
+...
+

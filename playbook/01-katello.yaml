@@ -1,0 +1,37 @@
+---
+- hosts: all
+  become: yes
+# use --limit to define specific hosts
+  gather_facts: yes
+  tasks:
+# run before bootstrap
+          - debug:
+                  var: hostvars[inventory_hostname]['ansible_default_ipv4']['address']
+          - debug:
+                  var: hostvars[inventory_hostname]['ansible_dns']['nameservers']
+
+
+          - name: install katello rpm
+            shell:
+                    cmd: rpm -Uvh {{ katello_url }} 
+            ignore_errors: yes
+          
+          - name: subscribe to redhat
+            shell:
+                    cmd: subscription-manager register --org='MCI' --activationkey='kceph05'
+            ignore_errors: yes
+            tags: subs
+
+          - name: check repolist added
+            shell:
+                    cmd: yum repolist
+            tags: subs
+            register: command_output
+
+          - debug:
+                  var: command_output.stdout_lines
+            tags: subs
+
+
+
+...

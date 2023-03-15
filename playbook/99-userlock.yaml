@@ -1,0 +1,9 @@
+---
+- hosts: all
+  gather_facts: no
+  become: yes
+  tasks:
+# run after pmp
+          - name: Lock Ansible account
+            shell:
+                    cmd: sudo usermod -L -e 1 ansible 

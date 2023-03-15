@@ -1,0 +1,34 @@
+---
+- hosts: all
+  # use --limit to define specific hosts
+  gather_facts: no
+  become: yes
+  tasks:
+# run before bootstrap 
+
+          - name: create bondp for Private Network
+            nmcli:
+                    type: bond
+                    conn_name: bondp
+                    ipv4: "{{ bondp_ipv4 }}"
+                    mode: 802.3ad
+                    state: present
+
+          - nmcli:
+                    type: bond-slave
+                    conn_name: bondp
+                    ifname: "{{ ifnamep1 }}" 
+                    ifname: "{{ ifnamep2 }}"
+                    master: bondp
+                    state: present
+          
+          - name: set method manual
+            shell:
+                    cmd: nmcli con mod bondp ipv4.method manual
+          - name: ifup bond private
+            shell:
+                    cmd: nmcli con up bondp
+
+
+...
+

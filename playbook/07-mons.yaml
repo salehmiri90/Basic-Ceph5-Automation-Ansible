@@ -1,0 +1,72 @@
+---
+- hosts: all
+  # use --limit to define specific hosts
+  gather_facts: no
+  become: yes
+  tasks:
+# run Befor bootstrap
+# run for only MONs
+
+          - name: display message
+            run_once: yes
+            debug:
+                    msg:
+                            - 'You need to modify keyring and ceph.conf files'
+                            - '###############################################'
+            tags: keys
+#-------------------------------------------------------------------------------------
+          - name: copy Ceph Keyring to MONs
+            copy:
+                  src: /home/ansible/kceph1/ceph.client.admin.keyring #modify it based on each cluster
+                  dest: /etc/ceph/
+                  owner: root
+                  group: root
+                  mode: '0600'
+                  remote_src: no
+            tags: keys
+
+
+          - name: copy Ceph conf to MONs
+            copy:
+                  src: /home/ansible/kceph1/ceph.conf #modify it based on each cluster
+                  dest: /etc/ceph/
+                  owner: root
+                  group: root
+                  mode: '0644'
+                  remote_src: no
+            tags: keys
+#-------------------------------------------------------------------------------------
+          - name: Podman Pull {{ podman_pull[2] }}
+            shell:
+                    cmd: podman pull {{podman_url}}/{{ podman_pull[2] }}
+            ignore_errors: true
+          - name: Podman Pull {{ podman_pull[3] }}
+            shell:
+                    cmd: podman pull {{podman_url}}/{{ podman_pull[3] }}
+            ignore_errors: true
+          - name: Podman Pull {{ podman_pull[4] }}
+            shell:
+                    cmd: podman pull {{podman_url}}/{{ podman_pull[4] }}
+            ignore_errors: true
+#-------------------------------------------------------------------------------------
+          - name: Podman TAG {{ podman_pull[2] }}
+            shell:
+                    cmd: podman tag {{podman_url}}/{{ podman_pull[2] }} {{podman_tag[2]}} 
+          - name: Podman TAG {{ podman_pull[3] }}
+            shell:
+                    cmd: podman tag {{podman_url}}/{{ podman_pull[3] }} {{podman_tag[3]}}
+          - name: Podman TAG {{ podman_pull[4] }}
+            shell:
+                    cmd: podman tag {{podman_url}}/{{ podman_pull[4] }} {{podman_tag[4]}}
+            ignore_errors: true
+#-------------------------------------------------------------------------------------
+          - name: Podman Images Output
+            shell:
+                    cmd: podman images
+            register: command_output
+          - debug:
+                  var: command_output.stdout_lines
+
+
+...
+
