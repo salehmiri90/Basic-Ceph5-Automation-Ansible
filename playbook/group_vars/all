@@ -35,16 +35,16 @@ podman_tag:
   - registry.redhat.io/rhceph/rhceph-5-dashboard-rhel
 
 ### NTP servers ###
-ntp_babaei:
-  - 10.115.11.129
-  - 10.115.11.130
-ntp_kazemian:
-  - 10.156.65.193
-  - 10.156.65.194
-ntp_tohid:
-  - 172.20.20.33
-  - 172.20.20.34
-  - 172.20.20.37
+ntp_...:
+  - ...
+  - ...
+ntp_...:
+  - ...
+  - ...
+ntp_...:
+  - ...
+  - ...
+  - ...
 
 ### SMTP Config ###
 #modify it for each cluster
