@@ -9,8 +9,7 @@
                     user: root
                     state: present
                     #key will be changed due to each cluster ceph.pub key
-                    key: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDZEROZB8pqoEeA6bULS6ZDToh736K+MZi1dk9AHZXbPe5IqTG8WNhYuJNMO0bZSlWvkBrL0XVYCgh9tNv+aolS0b5igXLoihNKrCvQdGBehWqHXegYENB0Jstb/1gsZukQXIl6FFJdVeX3Si3OsEckbPgOi1RPv85Y5gK7Rvd9Pxuw0Uts0T5IJgk+vA2zVe7ru7hrX09ltPpRvO9FuryPLDIQOgoHSF68/hail+JyFzqQvehjUoNswr1F2I+XqsVNq2oDJboQJB4XLyDHPUFFyJdsoaLg9evBBO+c8nxqHdbb3OvN5FSYsHg2WwtyjyoHPJ62985olKwwNwGznUjBRwK9lCbniCDYv4Jeb04rilrMehL77rZkZT3CHbhRTXev2yFo8imrHc7tSeNBQg4oRqAtywTTZxsbKzoIqFql+QoWSyxbB13SOFfNA/5tr6aQzm9IFjDBO7JLb/tV2d9BD5Y93cBu1bZ6sFR3IRC0MdnDvo5cTP7SSZstQIrn0Gc= ceph-edcc3da6-bcb0-11ed-9c77-00505697658b
-                    path: /root/.ssh/authorized_keys
+                    key: ssh-rsa ...
                     manage_dir: yes
                        
 
@@ -19,7 +18,7 @@
                     user: root
                     state: present
                     #key will be changed due to each cluster mon1 root user public key
-                    key: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCqpSW/E3wOhU9PMOoI6sYNRseaKBAyzB+zjpgZLMeP5RR0Jug5BpwEuLsOFJpO88jSFK7geOnoYr7vRyWAkEDyFraWXfQyn54aoNntKupb9FP4EUSbq+nhWg1IAVf4hIphUh3/0RJQZHGQMgUgbvD2JQ7OdQPTVJ/ZNwaY1xCwpqSPU9AaiBYLXd6lXBw+nFalazdAfTaP/M3bYelEVYrFwKs7d+b7NSMuryjzcXSnl5N84YQbE2YOF6H9n1TyfasO4SkIO5j76bTXZmJt85KXzhFFgL4WDs52vrRh/wzYIQF8lGmkDK2eaLH7B78VSB4gmoGvs22+2D4ujlx7TOQ5 root@kceph1-mon1
+                    key: ssh-rsa ...
                     path: /root/.ssh/authorized_keys
                     manage_dir: yes
 
