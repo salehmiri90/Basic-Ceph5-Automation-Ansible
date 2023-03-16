@@ -21,7 +21,7 @@
                     cmd: yum localinstall lpar2rrd-agent-7.50-0.noarch.rpm -y
           - name: configure package
             shell: 
-                    cmd: perl /opt/lpar2rrd-agent/lpar2rrd-agent.pl -d 172.20.29.198
+                    cmd: perl /opt/lpar2rrd-agent/lpar2rrd-agent.pl -d ...
             become: true
             ignore_errors: true
             register: command_output
