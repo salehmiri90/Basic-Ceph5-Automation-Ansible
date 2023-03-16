@@ -18,7 +18,7 @@
           
           - name: subscribe to redhat
             shell:
-                    cmd: subscription-manager register --org='MCI' --activationkey='kceph05'
+                    cmd: subscription-manager register --org='...' --activationkey='...'
             ignore_errors: yes
             tags: subs
 
