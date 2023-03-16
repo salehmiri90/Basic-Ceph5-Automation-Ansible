@@ -98,20 +98,20 @@
   
           - name: set SMTP host
             shell:
-                    cmd: ceph config set mgr mgr/alerts/smtp_host "bulkmail.mci.ir" --force
+                    cmd: ceph config set mgr mgr/alerts/smtp_host "bulkmail..." --force
             tags: smtp
             ignore_errors: yes
 
           - name: set SMTP destination
             shell:
-                    cmd: ceph config set mgr mgr/alerts/smtp_destination storage-team@mci.ir
+                    cmd: ceph config set mgr mgr/alerts/smtp_destination storage-team@...
             tags: smtp
             ignore_errors: yes
 
             #modify smtp sender for each cluster
           - name: set SMTP sender
             shell:
-                    cmd: ceph config set mgr mgr/alerts/smtp_sender {{ smtp_sender }}@noreply.mci.ir
+                    cmd: ceph config set mgr mgr/alerts/smtp_sender {{ smtp_sender }}@noreply...
             tags: smtp
             ignore_errors: yes
 
@@ -138,8 +138,8 @@
             debug:
                     msg:
                             - 'Things need to check: '
-                            - '- Plz check your email address (storage-team@mci.ir)'
-                            - '- You must recieve an email from {{ smtp_sender }}@noreply.mci.ir' 
+                            - '- Plz check your email address (...)'
+                            - '- You must recieve an email from {{ smtp_sender }}@noreply...' 
                             - '- Email Subject: HEALTH_WARN '
             tags: smtp
 ...
