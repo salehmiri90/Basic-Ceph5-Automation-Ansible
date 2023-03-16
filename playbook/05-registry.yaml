@@ -36,7 +36,7 @@
             ignore_errors: yes
           - name: Run Zabbix Agent command
             shell:
-                  cmd: podman run --name zabbix-agent --ip {{ zbx_ip }} -e ZBX_HOSTNAME={{ hostName }} -e ZBX_SERVER_HOST=172.18.27.5,10.88.0.1,10.88.0.2 --network=podman -p 10050:10050 -d artifactory.idm.mci.ir/docker.io/zabbix/zabbix-agent:latest
+                  cmd: podman run --name zabbix-agent --ip {{ zbx_ip }} -e ZBX_HOSTNAME={{ hostName }} -e ZBX_SERVER_HOST=... --network=podman -p 10050:10050 -d .../docker.io/zabbix/zabbix-agent:latest
             tags: zabbix
             ignore_errors: yes            
 #----------------------------------------------------------------------------------
