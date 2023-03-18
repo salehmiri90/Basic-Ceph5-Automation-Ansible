@@ -15,17 +15,17 @@
           - name: modify chrony file for Babaei Clusters
             shell:
                     cmd: sed -i '3 i \server {{ ntp_babaei[0] }} iburst \nserver {{ ntp_babaei[1] }} iburst \n ' /etc/chrony.conf
-            when: ansible_facts['default_ipv4']['gateway'] == "10.19.75.254"
+            when: ansible_facts['default_ipv4']['gateway'] == "gw-ip"
 
           - name: modify chrony file for Tohid Clusters
             shell:
                     cmd: sed -i '3 i \server {{ ntp_babaei[0] }} iburst \nserver {{ ntp_babaei[1] }} iburst \n ' /etc/chrony.conf
-            when: ansible_facts['default_ipv4']['gateway'] == "172.18.27.254"
+            when: ansible_facts['default_ipv4']['gateway'] == "gw-ip"
 
           - name: modify chrony file for Kazemian Clusters
             shell:
                     cmd: sed -i '3 i \server {{ ntp_babaei[0] }} iburst \nserver {{ ntp_babaei[1] }} iburst \n ' /etc/chrony.conf
-            when: ansible_facts['default_ipv4']['gateway'] == "10.156.199.254"
+            when: ansible_facts['default_ipv4']['gateway'] == "gw-ip"
 
           - name: restart chrony service
             service:
