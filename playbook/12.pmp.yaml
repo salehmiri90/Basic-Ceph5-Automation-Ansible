@@ -18,13 +18,13 @@
             shell:
                     cmd: |
                             tar -C / -xvf /tmp/pmp-configuration-2.tar
-                            chmod a+x /tmp/pmp-configuration/pmp-mci.sh
+                            chmod a+x /tmp/pmp-configuration/pmp-....sh
                             chown ansible:ansible /tmp/pmp-configuration/pmp*
             ignore_errors: yes
 
           - name: Run Shell
             shell:
-                    cmd: echo "yes" | /tmp/pmp-configuration/pmp-mci.sh
+                    cmd: echo "yes" | /tmp/pmp-configuration/pmp-....sh
             register: output_command
             ignore_errors: yes
 
