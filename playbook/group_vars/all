@@ -16,10 +16,10 @@ ceph_packages:
 
 
 ### Katello ###
-katello_url: http://satellite.idm.mci.ir/pub/katello-ca-consumer-latest.noarch.rpm
+katello_url: http://sat.../pub/katello-ca-consumer-latest.noarch.rpm
 
 ### Podman ###
-podman_url: artifactory.idm.mci.ir:5000
+podman_url: art...:5000
 podman_pull:
   - rhceph-5-rhel8
   - ose-prometheus-node-exporter:v4.6
