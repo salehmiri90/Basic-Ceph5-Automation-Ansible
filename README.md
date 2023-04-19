@@ -1,5 +1,9 @@
 # ansible-playbook-ceph
 This is the first version of ansible playbooks to deploy ceph 5 (pacific) in your server environment.
+
+At the very first step, you can find ks.cfg file for deploy it as kickstart file and install server's operating system (redhat) in short time.
+There is two way for baremetal provisioning, one is using kickstart and another is foreman. it's depends on your prefered. also the MaaS solution exists.
+
 I try to put comments in each file to help you when use the playbook.
 You need to run playbooks in order. 
 In below, I explained each playbooks. Please consider that this repo is updating continiously.
