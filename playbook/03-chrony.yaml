@@ -5,40 +5,43 @@
   become: yes
   tasks:
 # run before bootstrap
-          - name: set Timezone Tehran
-            timezone:
-                    name: Asia/city
-          - name: delete chrony old config
-            shell:
-                    cmd: sed -i '/iburst/d' /etc/chrony.conf
+  - name: Time
+    block:
+            - name: set Timezone to your city
+              timezone:
+                      name: Asia/city
+            - name: delete chrony old config
+              shell:
+                      cmd: sed -i '/iburst/d' /etc/chrony.conf
 
-          - name: modify chrony file for Cluster1
-            shell:
-                    cmd: sed -i '3 i \server {{ ntp_cluster1[0] }} iburst \nserver {{ ntp_cluster1[1] }} iburst \n ' /etc/chrony.conf
-            when: ansible_facts['default_ipv4']['gateway'] == "gw-ip"
+            - name: modify chrony file for Cluster1
+              shell:
+                      cmd: sed -i '3 i \server {{ ntp_cluster1[0] }} iburst \nserver {{ ntp_cluster1[1] }} iburst \n ' /etc/chrony.conf
+              when: ansible_facts['default_ipv4']['gateway'] == "{{ gw_ip }}"
 
-          - name: modify chrony file for Cluster2
-            shell:
-                    cmd: sed -i '3 i \server {{ ntp_cluster2[0] }} iburst \nserver {{ ntp_cluster2[1] }} iburst \n ' /etc/chrony.conf
-            when: ansible_facts['default_ipv4']['gateway'] == "gw-ip"
+            - name: modify chrony file for Cluster2
+              shell:
+                      cmd: sed -i '3 i \server {{ ntp_cluster2[0] }} iburst \nserver {{ ntp_cluster2[1] }} iburst \n ' /etc/chrony.conf
+              when: ansible_facts['default_ipv4']['gateway'] == "{{ gw_ip }}"
 
-          - name: modify chrony file for Cluster3
-            shell:
-                    cmd: sed -i '3 i \server {{ ntp_cluster3[0] }} iburst \nserver {{ ntp_cluster3[1] }} iburst \n ' /etc/chrony.conf
-            when: ansible_facts['default_ipv4']['gateway'] == "gw-ip"
+            - name: modify chrony file for Cluster3
+              shell:
+                      cmd: sed -i '3 i \server {{ ntp_cluster3[0] }} iburst \nserver {{ ntp_cluster3[1] }} iburst \n ' /etc/chrony.conf
+              when: ansible_facts['default_ipv4']['gateway'] == "{{ gw_ip }}"
 
-          - name: restart chrony service
-            service:
-                    name: chronyd
-                    state: restarted
-                    enabled: yes
+    always:
+            - name: restart chrony service
+              service:
+                      name: chronyd
+                      state: restarted
+                      enabled: yes
 
-          - name: check chrony
-            shell:
-                    cmd: chronyc sources
-            register: command_output
-          - debug:
-                  var: command_output.stdout_lines
+            - name: check chrony
+              shell:
+                      cmd: chronyc sources
+              register: command_output
+            - debug:
+                    var: command_output.stdout_lines
 
 
 ...
