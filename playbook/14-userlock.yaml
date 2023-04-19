@@ -4,7 +4,7 @@
   become: yes
   tasks:
 # run after pmp
-          - name: Remove Ansible from sudoers
+          - name: Remove ansible user from sudoers
             replace:
                     path: /etc/sudoers
                     regexp: '^ansible.*'
