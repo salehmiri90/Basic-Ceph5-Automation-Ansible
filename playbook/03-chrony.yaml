@@ -7,7 +7,7 @@
 # run before bootstrap
           - name: set Timezone Tehran
             timezone:
-                    name: Asia/Tehran
+                    name: Asia/city
           - name: delete chrony old config
             shell:
                     cmd: sed -i '/iburst/d' /etc/chrony.conf
