@@ -6,140 +6,91 @@
   tasks:
 # run before bootstrap only on MON1
 # need to modify for each cluster
-          - name: Install CephADM Packages
-            yum:
-                    name:
-                            - cephadm
-                    state: present
-            tags: packages
-            ignore_errors: no
+  - name: block packages 
+    block:
+            - name: Install CephADM Packages
+              yum:
+                      name:
+                              - cephadm
+                      state: present
            
-          - name: Backup Cephadm
-            shell:
-                    cmd: mv /usr/sbin/cephadm /usr/sbin/cephadm-bkp
+            - name: Backup Cephadm
+              shell:
+                      cmd: mv /usr/sbin/cephadm /usr/sbin/cephadm-bkp
 
-          - name: Copy new Cephadm file
-            copy:
-                    src: /home/ansible/common_config/cephadm
-                    dest: /usr/sbin/
-                    owner: root
-                    group: root
-                    mode: '0755'
-                    remote_src: no
-            tags: packages
+            - name: Copy new Cephadm file
+              copy:
+                      src: /home/ansible/common_config/cephadm
+                      dest: /usr/sbin/
+                      owner: root
+                      group: root
+                      mode: '0755'
+                      remote_src: no
+    ignore_errors: no
+    tags: packages
+
 #------------------------------------------------------------------
 # run After bootstrap only on MON1
 # need to modify for each cluster
+  - name: block osd files
+    block:
+            - name: Copy osd_spec files
+              copy:
+                      src: "{{ item }}"
+                      dest: /var/lib/ceph/osd/
+                      remote_src: no
+              with_fileglob:
+                      - /home/ansible/osd_spec/*
+    tags: osd
 
-          - name: Copy osd_spec files
-            copy:
-                    src: /home/ansible/osd_spec/osd_1.yaml
-                    dest: /var/lib/ceph/osd/
-                    remote_src: no
-            tags: osd
-
-          - name: Copy osd_spec files
-            copy:
-                    src: /home/ansible/osd_spec/osd_2.yaml
-                    dest: /var/lib/ceph/osd/
-                    remote_src: no
-            tags: osd
-          - name: Copy osd_spec files
-            copy:
-                    src: /home/ansible/osd_spec/osd_3.yaml
-                    dest: /var/lib/ceph/osd/
-                    remote_src: no
-            tags: osd
-          - name: Copy osd_spec files
-            copy:
-                    src: /home/ansible/osd_spec/osd_4.yaml
-                    dest: /var/lib/ceph/osd/
-                    remote_src: no
-            tags: osd
-          - name: Copy osd_spec files
-            copy:
-                    src: /home/ansible/osd_spec/osd_5.yaml
-                    dest: /var/lib/ceph/osd/
-                    remote_src: no
-            tags: osd
-          - name: Copy osd_spec files
-            copy:
-                    src: /home/ansible/osd_spec/osd_6.yaml
-                    dest: /var/lib/ceph/osd/
-                    remote_src: no
-            tags: osd
-          - name: Copy osd_spec files
-            copy:
-                    src: /home/ansible/osd_spec/osd_7.yaml
-                    dest: /var/lib/ceph/osd/
-                    remote_src: no
-            tags: osd
-          - name: Copy osd_spec files
-            copy:
-                    src: /home/ansible/osd_spec/osd_8.yaml
-                    dest: /var/lib/ceph/osd/
-                    remote_src: no
-            tags: osd
-          - name: Copy osd_spec script guide
-            copy:
-                    src: /home/ansible/osd_spec/cat-me.txt
-                    dest: /var/lib/ceph/osd/
-                    remote_src: no
-            tags: osd
 #------------------------------------------------------------------
 # run After bootstrap only on MANAGERS
 # need to modify for each cluster
-
-          - name: set alert enable
-            shell:
-                    cmd: ceph mgr module enable alerts
-            tags: smtp
-            ignore_errors: yes
+  - name: block smtp
+    block:
+            - name: set alert enable
+              shell:
+                      cmd: ceph mgr module enable alerts
   
-          - name: set SMTP host
-            shell:
-                    cmd: ceph config set mgr mgr/alerts/smtp_host "bulkmail..." --force
-            tags: smtp
-            ignore_errors: yes
+            - name: set SMTP host
+              shell:
+                      cmd: ceph config set mgr mgr/alerts/smtp_host "bulk.yourorg.com" --force
 
-          - name: set SMTP destination
-            shell:
-                    cmd: ceph config set mgr mgr/alerts/smtp_destination storage-team@...
-            tags: smtp
-            ignore_errors: yes
+            - name: set SMTP destination
+              shell:
+                      cmd: ceph config set mgr mgr/alerts/smtp_destination your-team@yourorg.com
 
             #modify smtp sender for each cluster
-          - name: set SMTP sender
-            shell:
-                    cmd: ceph config set mgr mgr/alerts/smtp_sender {{ smtp_sender }}@noreply...
-            tags: smtp
-            ignore_errors: yes
+            - name: set SMTP sender
+              shell:
+                      cmd: ceph config set mgr mgr/alerts/smtp_sender {{ clustername }}@noreply.yourorg.com
 
-          - name: disable SSL on SMTP
-            shell:
-                    cmd: ceph config set mgr mgr/alerts/smtp_ssl false
-            tags: smtp
-            ignore_errors: yes
+            - name: set email subject
+              shell:
+                      cmd: ceph config set mgr mgr/alerts/smtp_from_name "Ceph Cluster {{ clustername }}"
 
-          - name: set SMTP port 25
-            shell:
-                    cmd: ceph config set mgr mgr/alerts/smtp_port 25
-            tags: smtp
-            ignore_errors: yes
+            - name: disable SSL on SMTP
+              shell:
+                      cmd: ceph config set mgr mgr/alerts/smtp_ssl false
 
-          - name: Send a test alert
-            shell:
-                    cmd: ceph alerts send
-            tags: smtp
-            ignore_errors: yes
+            - name: set SMTP port 25
+              shell:
+                      cmd: ceph config set mgr mgr/alerts/smtp_port 25
 
-          - name: display messag
-            run_once: yes
-            debug:
+            - name: Send a test alert
+              shell:
+                      cmd: ceph alerts send
+ 
+            - name: display messag
+              run_once: yes
+              debug:
                     msg:
                             - 'Things need to check: '
-                            - '- Plz check your email address (...)'
-                            - '- You must recieve an email from {{ smtp_sender }}@noreply...' 
-                            - '- Email Subject: HEALTH_WARN '
-            tags: smtp
+                            - '- Plz check your email address (your-team@yourorg.com)'
+                            - '- You must recieve an email from {{ clustername }}@noreply.yourorg.com' 
+                            - '- Email Subject: Email Subject: Ceph Cluster {{ clustername }} '
+    tags: smtp
+    ignore_errors: yes
+
+
 ...
