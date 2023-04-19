@@ -1,0 +1,20 @@
+---
+clustername: myname
+mon1_ip: 
+####### key info ####
+ceph_pub: 
+bootstrap_options: 
+####### osd config ####
+data_disk_qty: 2
+first_disk: b
+last_disk: c
+db_disk: sdd
+wal_size: 40G
+disks:
+  - name: sdb
+    num: 1
+  - name: sdc
+    num: 2
+
+
+...
