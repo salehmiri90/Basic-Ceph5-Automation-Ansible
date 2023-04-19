@@ -5,31 +5,37 @@
   gather_facts: no
   tasks:
 # run before bootstrap
-          - name: Install Initial {{ basic_packages }} Packages
-            yum:
-                    name: "{{ item }}"
-                    state: latest
-                    update_cache: yes
-            loop: "{{ basic_packages }}"
-            tags: packages
-            ignore_errors: yes
+  - name: Initial Packages
+    block:
+            - name: Install Initial {{ basic_packages }} Packages
+              yum:
+                      name: "{{ item }}"
+                      state: latest
+                      update_cache: yes
+              loop: "{{ basic_packages }}"
+    ignore_errors: yes
+    tags: packages
 
-          - name: Install Ceph Packages include {{ ceph_packages }}
-            yum:
-                    name: "{{ item }}"
-                    state: present
-            loop: "{{ ceph_packages }}"
-            tags: ceph
-            ignore_errors: yes
+  - name: Ceph Packages
+    block:
+            - name: Install Ceph Packages include {{ ceph_packages }}
+              yum:
+                      name: "{{ item }}"
+                      state: present
+              loop: "{{ ceph_packages }}"
+    ignore_errors: yes
+    tags: ceph
 
-          - name: Check tzdata version
-            shell:
-                    cmd: rpm -qa | grep tzdata
-            register: tzdata
-            tags: time
-          - debug:
-                  var: tzdata.stdout_lines
-            tags: time
+  - name: Time Packages
+    block:
+            - name: Check tzdata version
+              shell:
+                      cmd: rpm -qa | grep tzdata
+              register: tzdata
+            - debug:
+                    var: tzdata.stdout_lines
+    ignore_errors: yes
+    tags: time
 
 
 ...
