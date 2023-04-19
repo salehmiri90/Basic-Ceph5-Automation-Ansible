@@ -2,33 +2,45 @@
 - hosts: all
   # use --limit to define specific hosts
   become: yes
-  serial: 1
-  gather_facts: yes
+  gather_facts: no
   tasks:
 # run before bootstrap
-          
-          - name: set Hostname 
-            hostname:
-                    name: "{{ hostName }}"
-            tags: hostname
+  - name: Hostname
+    block:
+            - name: set Hostname 
+              hostname:
+                      name: "{{ hostName }}"
 
-          - name: ens192 Onboot Yes
-            replace:
-                    path: /etc/sysconfig/network-scripts/ifcfg-ens192     #ifcfg-ens192
-                    regexp: '^ONBOOT=no'
-                    replace: 'ONBOOT=yes'
+    tags: hostname
 
-          - name: Disable IPv6
-            replace:
-                    path: /etc/sysconfig/network-scripts/ifcfg-ens192   #ens192
-                    regexp: '^IPV6.*'
-                    replace: '#'
-                    #sed -i 's/^IPV6.*/ d' /etc/sysconfig/network-scripts/ifcfg-ens192 
-          - name: Restart Network
-            service:
-                  name: NetworkManager
-                  state: started
-                  enabled: yes
+  - name: Interfaces
+    block: 
+            - name: Interfaces Onboot Yes
+              replace:
+                      path: /etc/sysconfig/network-scripts/{{ item }}
+                      regexp: '^ONBOOT=no'
+                      replace: 'ONBOOT=yes'
+              with_items:
+                      - ifcfg-bond0
+                      - ifcfg-bondc
+                      - ifcfg-ens192
+
+            - name: Disable IPv6
+              replace:
+                      path: /etc/sysconfig/network-scripts/{{ item }}
+                      regexp: '^IPV6.*'
+                      replace: '#'
+              with_items:
+                      - ifcfg-bond0
+                      - ifcfg-bondc
+                      - ifcfg-ens192
+    ignore_errors: yes
+    always:
+            - name: Restart Network
+              service:
+                    name: NetworkManager
+                    state: started
+                    enabled: yes
 
 
 ...
