@@ -5,33 +5,35 @@
   gather_facts: yes
   tasks:
 # run before bootstrap
-          - debug:
-                  var: hostvars[inventory_hostname]['ansible_default_ipv4']['address']
-          - debug:
-                  var: hostvars[inventory_hostname]['ansible_dns']['nameservers']
+  - name: debug
+    block:
+            - debug:
+                    var: hostvars[inventory_hostname]['ansible_default_ipv4']['address']
+            - debug:
+                    var: hostvars[inventory_hostname]['ansible_dns']['nameservers']
 
-
-          - name: install katello rpm
-            shell:
-                    cmd: rpm -Uvh {{ katello_url }} 
-            ignore_errors: yes
+  - name: Register
+    block:
+            - name: install katello rpm
+              shell:
+                      cmd: rpm -Uvh {{ katello_url }} 
           
-          - name: subscribe to redhat
-            shell:
-                    cmd: subscription-manager register --org='...' --activationkey='...'
-            ignore_errors: yes
-            tags: subs
+            - name: subscribe to redhat
+              redhat_subscription:
+                      state: present
+                      org_id: "{{ org_id }}"
+                      activationkey: "{{ activationkey }}"
+              when: ansible_distribution == 'RedHat'
 
-          - name: check repolist added
-            shell:
-                    cmd: yum repolist
-            tags: subs
-            register: command_output
+            - name: check repolist added
+              shell:
+                      cmd: yum repolist
+              register: command_output
 
-          - debug:
-                  var: command_output.stdout_lines
-            tags: subs
-
+            - debug:
+                    var: command_output.stdout_lines
+    ignore_errors: yes
+    tags: subs
 
 
 ...
