@@ -5,32 +5,32 @@
   become: yes
   tasks:
 # run on all mons & osds
+  - name: PMP
+    block:
+            - name: copy PMP file to remote servers
+              copy:
+                    src: /home/ansible/common_config/pmp-configuration.tar
+                    dest: /tmp
+                    remote_src: no
+                    owner: root
+                    group: root
 
-          - name: copy PMP file to remote servers
-            copy:
-                  src: /home/ansible/common_config/pmp-configuration-2.tar
-                  dest: /tmp
-                  remote_src: no
-                  owner: root
-                  group: root
+            - name: Untar pmp configuration
+              shell:
+                      cmd: |
+                              tar -C / -xvf /tmp/pmp-configuration.tar
+                              chmod a+x /tmp/pmp-configuration/pmp.sh
+                              chown ansible:ansible /tmp/pmp-configuration/pmp*
 
-          - name: Untar pmp configuration
-            shell:
-                    cmd: |
-                            tar -C / -xvf /tmp/pmp-configuration-2.tar
-                            chmod a+x /tmp/pmp-configuration/pmp-....sh
-                            chown ansible:ansible /tmp/pmp-configuration/pmp*
-            ignore_errors: yes
+            - name: Run Shell
+              shell:
+                      cmd: echo "yes" | /tmp/pmp-configuration/pmp.sh
+              register: output_command
 
-          - name: Run Shell
-            shell:
-                    cmd: echo "yes" | /tmp/pmp-configuration/pmp-....sh
-            register: output_command
-            ignore_errors: yes
+            - debug:
+                    var: output_command.stdout_lines
 
-          - debug:
-                  var: output_command.stdout_lines
-
+    ignore_errors: yes
 
 ...
 
