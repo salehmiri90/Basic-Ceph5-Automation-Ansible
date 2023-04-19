@@ -4,21 +4,11 @@
   gather_facts: no
   become: yes
   tasks:
-          - name: set authorized key
+          - name: set 
             authorized_key:
                     user: root
                     state: present
-                    #key will be changed due to each cluster ceph.pub key
-                    key: ssh-rsa ...
-                    manage_dir: yes
-                       
-
-          - name: set authorized key
-            authorized_key:
-                    user: root
-                    state: present
-                    #key will be changed due to each cluster mon1 root user public key
-                    key: ssh-rsa ...
+                    key: "{{ ceph_pub }}"
                     path: /root/.ssh/authorized_keys
                     manage_dir: yes
 
