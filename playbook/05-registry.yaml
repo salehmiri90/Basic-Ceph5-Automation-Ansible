@@ -7,70 +7,74 @@
 # run before bootstrap
 # run on all mons & osds
 # pull only essential podman images
+  - name: Registry
+    block:
+            - name: Backup Registries.conf
+              shell:
+                      cmd: mv /etc/containers/registries.conf /etc/containers/registries.conf-old
+            - name: Replace Registries.conf
+              copy:
+                      src: /home/ansible/common_config/registries.conf
+                      dest: /etc/containers/
+                      owner: root
+                      group: root
+                      mode: '0755'
+                      remote_src: no
 
-          - name: Backup Registries.conf
-            shell:
-                    cmd: mv /etc/containers/registries.conf /etc/containers/registries.conf-old
-          - name: Replace Registries.conf
-            copy:
-                  src: /home/ansible/common_config/registries.conf
-                  dest: /etc/containers/
-                  owner: root
-                  group: root
-                  mode: '0755'
-                  remote_src: no
 #----------------------------------------------------------------------------------
-          - name: copy Zabbix agent to remote servers
-            copy:
-                  src: /home/ansible/common_config/zabbixagent.tar
-                  dest: /home/ansible/
-                  remote_src: no
-                  owner: root
-                  group: root
-                  mode: '0644'
-            tags: zabbix
-          - name: Podman Load Zabbix Agent
-            shell:
-                    cmd: podman load -i /home/ansible/zabbixagent.tar
-            tags: zabbix
-            ignore_errors: yes
-          - name: Run Zabbix Agent command
-            shell:
-                  cmd: podman run --name zabbix-agent --ip {{ zbx_ip }} -e ZBX_HOSTNAME={{ hostName }} -e ZBX_SERVER_HOST=... --network=podman -p 10050:10050 -d .../docker.io/zabbix/zabbix-agent:latest
-            tags: zabbix
-            ignore_errors: yes            
+  - name: Zabbix
+    block:
+            - name: copy Zabbix agent to remote servers
+              copy:
+                      src: /home/ansible/common_config/zabbixagent.tar
+                      dest: /home/ansible/
+                      remote_src: no
+                      owner: root
+                      group: root
+                      mode: '0644'
+            - name: Podman Load Zabbix Agent
+              shell:
+                      cmd: podman load -i /home/ansible/zabbixagent.tar
+            - name: Run Zabbix Agent command
+              shell:
+                      cmd: podman run --name zabbix-agent --ip {{ zbx_ip }} -e ZBX_HOSTNAME={{ hostName }} -e ZBX_SERVER_HOST={{ zbx }} --network=podman -p 10050:10050 -d docker.io/zabbix/zabbix-agent:latest
+    tags: zabbix
+    ignore_errors: yes
+
 #----------------------------------------------------------------------------------
-          - name: Podman Pull {{ podman_pull[0] }}
-            shell:
-                    cmd: podman pull {{podman_url}}/{{ podman_pull[0] }}
-            ignore_errors: true
+  - name: Podman
+    block:
+            - name: Podman Pull {{ podman_pull[0] }}
+              shell:
+                      cmd: podman pull {{podman_url}}/{{ podman_pull[0] }}
 
-          - name: Podman Pull {{ podman_pull[1] }}
-            shell:
-                    cmd: podman pull {{podman_url}}/{{ podman_pull[1] }}
-            ignore_errors: true
-#-------------------------------------------------------------------------------------
-          - name: Podman TAG  {{ podman_pull[0] }} 
-            shell:
-                    cmd: podman tag  {{podman_url}}/{{ podman_pull[0] }} {{podman_tag[0]}}
-          - name: Podman TAG {{ podman_pull[1] }}
-            shell:
-                    cmd: podman tag {{podman_url}}/{{ podman_pull[1] }} {{podman_tag[1]}}
+            - name: Podman Pull {{ podman_pull[1] }}
+              shell:
+                      cmd: podman pull {{podman_url}}/{{ podman_pull[1] }}
+#            ----------------------------------------------------------------------------
+            - name: Podman TAG  {{ podman_pull[0] }} 
+              shell:
+                      cmd: podman tag  {{podman_url}}/{{ podman_pull[0] }} {{podman_tag[0]}}
+            - name: Podman TAG {{ podman_pull[1] }}
+              shell:
+                      cmd: podman tag {{podman_url}}/{{ podman_pull[1] }} {{podman_tag[1]}}
 
-          - name: Podman Images Output
-            shell:
-                    cmd: podman images
-            register: command_output
-          - debug:
-                  var: command_output.stdout_lines
+            - name: Podman Images Output
+              shell:
+                      cmd: podman images
+              register: command_output
+            - debug:
+                    var: command_output.stdout_lines
+#            ---------------------------------------------------------------------------
+            - name: display message
+              run_once: yes
+              debug:
+                      msg:
+                              - 'Things must to do: '
+                              - '- Cluster is ready for bootstrap configuration'
+                              - '- Login to cephadm (mon1) then run bootstrap'
+    tags: podman
 
-#-------------------------------------------------------------------------------------
-          - name: display message
-            run_once: yes
-            debug:
-                    msg:
-                            - 'Things must to do: '
-                            - '- Cluster is ready for bootstrap configuration'
-                            - '- Login to cephadm (mon1) then run bootstrap'
+
 
 ...
