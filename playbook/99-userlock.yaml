@@ -4,6 +4,13 @@
   become: yes
   tasks:
 # run after pmp
-          - name: Lock Ansible account
+          - name: Remove Ansible from sudoers
+            replace:
+                    path: /etc/sudoers
+                    regexp: '^ansible.*'
+                    replace: '#'
+
+          - name : lock
             shell:
-                    cmd: sudo usermod -L -e 1 ansible 
+                    cmd: sudo usermod -L -e 1 ansible
+...
