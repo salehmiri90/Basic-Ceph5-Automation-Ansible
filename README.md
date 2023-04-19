@@ -31,7 +31,10 @@ I used a custome url for my image repository (nexus, artifactory), thus I copy t
 In next task, the zabbix agent copy to target machine and run it as container. After that, podman will used to pull and tag my containers.
 
 06-adm.yaml
-
+This config file only need to run on your cephadm machine which always called MON1. 
+The cephadm package is installed then transfer my customized cephadm configuration from ansible machine to target server with required permissions.
+After that due to add osds on MON1 after bootstrap, I copied required files to MON1.
+At the end, configuring smtp to send alerts.
 
 07-mons.yaml
 08-ceph-ssh-copy.yaml
