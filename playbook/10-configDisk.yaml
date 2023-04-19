@@ -1,30 +1,35 @@
 ---
 - hosts: all
   # use --limit to define specific hosts
+  # define variables in group vars
   serial: 1
   become: yes
   gather_facts: no
   tasks:
-          - name: pvcreate
-            shell:
-                    cmd: pvcreate /dev/sd[b-i]
-            shell:
-                    cmd: pvcreate /dev/sdk
+  - name: Config Disks
+    block:
+            - name: pvcreate
+              shell:
+                      cmd: pvcreate /dev/sd[{{ first_disk }}-{{ last_disk }}]
+              shell:
+                      cmd: pvcreate /dev/{{ db_disk }}
 
-          - name: vgcreate Ceph Blocks
-            shell:
-                    cmd: let "j = 1"; for i in {b..i}; do vgcreate ceph-block-$j /dev/sd[$i]; let "j = $j + 1"; done
-          - name: vgcreate CephDB
-            shell:
-                    cmd: vgcreate ceph-db /dev/sdk 
-          - name: lvcreate Ceph Blocks
-            shell:
-                    cmd: for i in {1..8}; do  lvcreate ceph-block-$i -l 100%FREE -n block$i; done
+            - name: vgcreate Ceph Blocks
+              shell:
+                      cmd: vgcreate ceph-block-{{ item.num }} /dev/{{ item.name }}
+              with_items:
+                      - "{{ disks }}" 
+            - name: vgcreate CephDB
+              shell:
+                      cmd: vgcreate ceph-db /dev/{{ db_disk }}
+            - name: lvcreate Ceph Blocks
+              shell:
+                      cmd: for i in {1..{{data_disk_qty}}}; do  lvcreate ceph-block-$i -l 100%FREE -n block$i; done
 
-          - name: lvcreate Ceph DB
-            shell:
-                    cmd: for i in {1..8}; do lvcreate ceph-db -L 200G -n db$i; done
+            - name: lvcreate Ceph DB
+              shell:
+                      cmd: for i in {1..{{data_disk_qty}}}; do lvcreate ceph-db -L {{ wal_size }} -n db$i; done
 
-
+    tags: configdisk
 
 ...
