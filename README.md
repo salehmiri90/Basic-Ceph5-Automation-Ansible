@@ -37,10 +37,27 @@ After that due to add osds on MON1 after bootstrap, I copied required files to M
 At the end, configuring smtp to send alerts.
 
 07-mons.yaml
+For configuring ceph mons, you need to copy keyrings from mon1 to other mons, so you need to run this playbook to do that. the files permission is mandatory.
+After that, using podman to pull and tag required images, you can find the images name and tags in group_vars/all.
+
 08-ceph-ssh-copy.yaml
+Same as previous step, due to connect mon1 to other mons by password-less ceph user, you need to copy ceph.pub to other mons by running this playbook.
+
 09-checkDisk.yaml
+On your osd servers and due to required configurations, you need to check the disks be in order then running pv,vg,lv commands to build your osd infra, so running this playbook to have a detail look on your osds.
+
 10-configDisk.yaml
+After you checked the physical disk on osd servers, you need to configure pv,vg and lv based on parmeters you set in host_vars/hostname. this file will import later in this repo.
+
 11-add-host.yaml
+After your osds are ready, you can run this playbook on mon1 to add hosts with physical disks into your ceph cluster. the variables load from host_vars file.
+
 12-xoroux.yaml
+Except our zabbix monitoring, I use xoroux company software for our physical server's monitoring by agent and this playbook run configuration related to this subject.
+
 13-pmp.yaml
+If you have pmp for increase security policy on your cluster's environmnt, you can put configuration file into ansible machine, then ansible transfer and run in target.
+
 99-userlock.yaml
+Based on security policy, it's highly recommended after your cluster run and fine, disable ansible user from cluster's servers and remove it's authority to be sudeor. this playbook do both.
+After running this task, you'll not be able to connect from ansible machine to target servers. 
